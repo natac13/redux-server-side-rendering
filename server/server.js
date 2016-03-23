@@ -5,13 +5,16 @@ import compression from 'compression';
 
 // react and redux stuff
 import React from 'react';
-import { renderToString } from 'react-dom/server';
+import { renderToString } from 'react-dom/server'; // way to render react
 import createLocation from 'history/lib/createLocation';
 import {
-  RouterContext,
+  RouterContext, // represents the Component structure for given route
   match,
-  createMemoryHistory,
+  createMemoryHistory, // used to be from history
 } from 'react-router';
+
+// actions
+import * as actionCreators from '../app/actions/';
 
 import configureStore from '../app/store/configureStore';
 import configureRoutes from '../app/routes/';
@@ -25,6 +28,14 @@ import webpackHotMiddleware from 'webpack-hot-middleware';
 import webpackConfig from '../webpack.config';
 const compiler = webpack(webpackConfig);
 
+/**
+ * Given a output from calling renderToString from react/server and an initialState
+ * from the Redux store created by configureStore(), this will return a template
+ * string representing the index.html file
+ * @param  {string} html
+ * @param  {string} initialState
+ * @return {string}
+ */
 function renderFullPage(html, initialState) {
   return `
     <!DOCTYPE html>
@@ -48,22 +59,26 @@ function renderFullPage(html, initialState) {
   `;
 }
 function handleRender(req, res) {
-  // create history
+  // create memory history, used just on server side
   const history = createMemoryHistory();
   // create new redux store instance every request
   const store = configureStore();
-  // create routes
+  // create routes passing in history for <Router />
   const routes = configureRoutes(history);
   // create a location from the req.url
   const location = createLocation(req.url);
   // optional dispatch any actions, eg logging in a user.
+  store.dispatch(actionCreators.counterIncrement());
+
 
   match({ routes, location }, (error, redirectLocation, renderProps) => {
+    // would be valid when using redux-auth-wrapper?? or onEnter from react-router?
     if (redirectLocation) {
       res.redirect(301, redirectLocation.pathname + redirectLocation.search);
     } else if (error) {
       res.status(500).send(error.message);
     } else if (renderProps === null) {
+      // not matching a route from the React routes
       res.status(404).send('Not Found');
     } else {
       // pass the state from the store to the client
@@ -73,7 +88,7 @@ function handleRender(req, res) {
       // create htmlString of components
       const html = renderToString(
         <Provider store={store}>
-          { <RouterContext { ...renderProps } /> }
+           <RouterContext { ...renderProps } />
         </Provider>
       );
 
@@ -96,7 +111,7 @@ if (isDevelopment) {
 
 app.use(compression());
 app.use(express.static(path.join(__dirname, 'build')));
-app.get('/', handleRender);
+app.get('*', handleRender);
 
 const port = process.env.PORT || 3013;
 

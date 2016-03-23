@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { defaultProps } from 'recompose';
+import { Link } from 'react-router';
 
 import Counter from '../Counter/';
 
@@ -11,6 +12,8 @@ function Hello(props) {
       <div style={{ margin: 'auto', width: '75%' }}>
         <Counter { ...props } />
       </div>
+      <Link to="/login">Login</Link>
+      <Link to="/profile">Profile</Link>
     </div>
   );
 }
