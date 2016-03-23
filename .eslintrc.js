@@ -3,6 +3,7 @@ module.exports = {
     "plugins": [
         "react"
     ],
+    "parser": "babel-eslint",
     "rules": {
       "new-cap": ["error", {
         "capIsNewExceptions": ["Map", "Set", "List"]
