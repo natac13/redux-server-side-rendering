@@ -12,10 +12,15 @@ import { Provider } from 'react-redux';
 
 import configureStore from './store/configureStore';
 import configureRoutes from './routes/';
+
 const history = browserHistory;
 
-const store = configureStore();
+// grab the initialState from the server.
+const initialState = window.__INITIAL_STATE__;
+// turn the immutable properties back to immutable
+initialState.counter = Immutable.fromJS(initialState.counter);
 
+const store = configureStore(initialState);
 
 const rootElement = document.getElementById('root');
 

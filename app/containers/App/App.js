@@ -5,9 +5,10 @@ import { bindActionCreators } from 'redux';
 import * as actionCreators from '../../actions/';
 
 function App(props) {
+  console.log(props);
   const childrenWithStoreProps = React.Children.map(
       props.children,
-      (child) => React.cloneElement(child, ...props));
+      (child) => React.cloneElement(child, { ...props }));
   return (
     <div>
       {childrenWithStoreProps}
@@ -20,14 +21,15 @@ App.propTypes = {
 };
 
 function mapStateToProps(state) {
-  console.log(state)
   return {
     counter: state.counter,
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(actionCreators, dispatch);
+  return {
+    actions: bindActionCreators(actionCreators, dispatch),
+  };
 }
 
 
