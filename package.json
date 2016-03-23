@@ -1,6 +1,6 @@
 {
   "name": "redux-server-side-rendering",
-  "version": "1.0.0",
+  "version": "FINAL",
   "description": "My attempt to figure out server side rendering in React and pass the redux state along from server to client. Also involing react routes",
   "main": "server/index.js",
   "scripts": {
